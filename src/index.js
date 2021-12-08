@@ -2,14 +2,18 @@ const Koa = require('koa')
 const app = new Koa()
 const bodyParser = require('koa-bodyparser');
 const db = require('./db')
+const KoaJWT = require('koa-jwt')
 const albumsRouter = require('./routes/albums')
+const basicRouter = require('./routes/basic')
 
 app.use(bodyParser());
+app.use(KoaJWT({secret: 'asdf'}).unless({
+        path: [/^\/api\/login/] 
+    }))
 
 app.use(albumsRouter.routes())
-app.use(async ctx => {
-  ctx.body = 'Hello World'
-});
+app.use(basicRouter.routes())
+
 
 app.listen('3000', async () => {
   try {
